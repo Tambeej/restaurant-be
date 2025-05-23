@@ -1,0 +1,17 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 274640493507-m6n9ml0egsjdo92422a5ttmf68i62ps1.apps.googleusercontent.com
+            client-secret: ${google_client_secret}
+            redirect-uri: "http://localhost:1360/login/oauth2/code/google"
+            scope:
+              - openid
+              - profile
+              - email
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
