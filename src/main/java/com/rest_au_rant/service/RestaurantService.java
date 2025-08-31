@@ -75,4 +75,13 @@ public class RestaurantService {
         return restaurantRepository.findByKitchen(kitchen).orElseThrow(()->new ResourceNotFoundException("There is no restaurant for kitchen id: "+kitchenId));
 
     }
+
+    public Restaurant getRestaurantByManagerEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Manager manager = managerRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+        return restaurantRepository.findByManager(manager)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+    }
 }

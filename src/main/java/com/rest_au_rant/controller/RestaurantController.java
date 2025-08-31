@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,6 +50,13 @@ public class RestaurantController {
     @GetMapping( "/get_restaurant_from_kitchen")
     public ResponseEntity<Restaurant> getRestaurantFromKitchenId(@RequestParam("kitchen_id") Long kitchen_id) {
         Restaurant restaurant = restaurantService.getRestaurantFromKitchenId(kitchen_id);
+        return ResponseEntity.ok(restaurant);
+    }
+
+    @GetMapping("/my-restaurant")
+    public ResponseEntity<Restaurant> getMyRestaurant(@AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getClaim("email");
+        Restaurant restaurant = restaurantService.getRestaurantByManagerEmail(email);
         return ResponseEntity.ok(restaurant);
     }
 }
