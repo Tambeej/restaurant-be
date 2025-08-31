@@ -48,6 +48,30 @@ public class WaiterRestaurantService {
         return waiterRestaurantRepository.save(mapping);
     }
 
+    @Transactional
+    public WaiterRestaurant assignWaiterToRestaurantByEmail(String email, Long restaurantId) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user.getRole() != Role.WAITER) {
+            throw new ResourceNotFoundException("User is not a waiter");
+        }
+        Waiter waiter = waiterRepository.findById(user.getId()).orElse(null);
+        if (waiter == null) {
+            waiter = new Waiter(user.getId(), user.getUserName(), user.getEmail(), user.getRole());
+        }
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+        WaiterRestaurant existing = waiterRestaurantRepository.findByWaiterId(user.getId());
+        if (existing != null && existing.getRestaurant().equals(restaurant)) {
+            throw new ResourceNotFoundException("Waiter already assigned to this restaurant");
+        }
+        WaiterRestaurant mapping = WaiterRestaurant.builder()
+                .waiter(waiter)
+                .restaurant(restaurant)
+                .build();
+        return waiterRestaurantRepository.save(mapping);
+    }
+
     public List<Waiter> getWaitersByRestaurant(Long restaurantId) {
         return waiterRestaurantRepository.findWaitersByRestaurantId(restaurantId);
     }
