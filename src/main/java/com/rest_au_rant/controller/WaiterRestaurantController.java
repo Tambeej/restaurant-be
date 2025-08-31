@@ -58,4 +58,12 @@ public class WaiterRestaurantController {
         waiterRestaurantService.removeWaiterFromRestaurant(waiterId, restaurantId);
         return  ResponseEntity.noContent().build();
     }
+
+    @CheckRestaurantPermission(IdType.RESTAURANT)
+    @PostMapping(value = "/assign-by-email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<WaiterRestaurant> assignWaiterToRestaurantByEmail(
+            @RequestParam("restaurant_id") Long restaurantId, @RequestParam("email") String email ) {
+        WaiterRestaurant result = waiterRestaurantService.assignWaiterToRestaurantByEmail(restaurantId, email);
+        return ResponseEntity.ok(result);
+    }
 }

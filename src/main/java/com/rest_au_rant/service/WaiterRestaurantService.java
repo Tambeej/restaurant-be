@@ -79,4 +79,16 @@ public class WaiterRestaurantService {
     public List<WaiterRestaurant> getAllWaiters() {
         return waiterRestaurantRepository.findAll();
     }
+
+    @Transactional
+    public WaiterRestaurant assignWaiterToRestaurantByEmail(Long restaurantId, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user.getRole() != Role.WAITER) {
+            throw new ResourceNotFoundException("User is not a waiter");
+        }
+        Waiter waiter = waiterRepository.findById(user.getId())
+                .orElse(new Waiter(user.getId(), user.getEmail(), user.getUserName(), Role.WAITER));
+        return assignWaiterToRestaurant(waiter.getId(), restaurantId);
+    }
 }
