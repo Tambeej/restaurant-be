@@ -26,6 +26,14 @@ public class WaiterRestaurantController {
         return ResponseEntity.ok(result);
     }
 
+    @CheckRestaurantPermission(IdType.RESTAURANT)
+    @PostMapping(value = "/assign-by-email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<WaiterRestaurant> assignWaiterByEmail(
+            @RequestParam("email") String email, @RequestParam("restaurant_id") Long restaurantId) {
+        WaiterRestaurant result = waiterRestaurantService.assignWaiterToRestaurantByEmail(email, restaurantId);
+        return ResponseEntity.ok(result);
+    }
+
     // Get all waiters for a specific restaurant
     @CheckRestaurantPermission(IdType.RESTAURANT)
     @GetMapping(value = "/get_waiters/{restaurant_id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
